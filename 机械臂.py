@@ -83,8 +83,8 @@ def main():
         if len(parts) != 2:
             print("请输入两个角度值（度）")
             continue
-        theta1_cur = correct_degree(float(parts[0]), theta1_past)
-        theta2_cur = correct_degree(float(parts[1]), theta2_past)
+        theta1_cur = correct_degree(float(parts[0])%360, theta1_past)
+        theta2_cur = correct_degree(float(parts[1])%360, theta2_past)
         plot(theta1_past, theta2_past, theta1_cur, theta2_cur)
         theta1_past, theta2_past = theta1_cur, theta2_cur
 #-----------------------------------
