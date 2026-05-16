@@ -32,7 +32,7 @@ def generate_trajectory(theta1_last, theta2_last, theta1_new, theta2_new):
 
 
 #修正角度,以避免出现过半圈跳转
-def correcct_degree(theta_cur,theta_past):
+def correct_degree(theta_cur,theta_past):
     theta_cur = np.radians(theta_cur)
     if abs(theta_cur-theta_past)>np.pi:
         if theta_cur>theta_past:
@@ -83,8 +83,8 @@ def main():
         if len(parts) != 2:
             print("请输入两个角度值（度）")
             continue
-        theta1_cur = correcct_degree(float(parts[0]), theta1_past)
-        theta2_cur = correcct_degree(float(parts[1]), theta2_past)
+        theta1_cur = correct_degree(float(parts[0]), theta1_past)
+        theta2_cur = correct_degree(float(parts[1]), theta2_past)
         plot(theta1_past, theta2_past, theta1_cur, theta2_cur)
         theta1_past, theta2_past = theta1_cur, theta2_cur
 #-----------------------------------
