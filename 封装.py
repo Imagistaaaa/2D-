@@ -21,13 +21,13 @@ def forward_kinematics(theta1, theta2):
 
 #逆运动学部分（输入坐标以求解角度）
 def backward_kinematics(x, y):
- 
+
     L = np.sqrt(x**2 + y**2)
-    
+
     cos_theta2 = (L**2 - l1**2 - l2**2) / (2 * l1 * l2)
     cos_theta2 = np.clip(cos_theta2, -1, 1)
-    theta2_up = np.arccos(cos_theta2)    
-    theta2_down = -theta2_up             
+    theta2_up = np.arccos(cos_theta2)
+    theta2_down = -theta2_up
 
     for theta2 in [theta2_up, theta2_down]:
         k1 = l1 + l2 * np.cos(theta2)
@@ -44,7 +44,7 @@ def backward_kinematics(x, y):
         return theta1_down, theta2_down
 #---------------------------------
 
-                   
+
 #插值生成轨迹
 def generate_trajectory(theta1_last, theta2_last, theta1_new, theta2_new):
     theta1s = np.linspace(theta1_last, theta1_new, num=step)
@@ -70,12 +70,12 @@ def correct_degree(theta_cur,theta_past):
 #绘制轨迹和机械臂
 def plot(theta1_last, theta2_last, theta1_new, theta2_new):
     fig, ax = plt.subplots(figsize=(6, 6), dpi=200)
-    
+
     last = np.array(forward_kinematics(theta1_last, theta2_last))
     new  = np.array(forward_kinematics(theta1_new, theta2_new))
     trail = np.array(generate_trajectory(theta1_last, theta2_last,
                                          theta1_new, theta2_new))
-    
+
     ax.plot(last[:,0], last[:,1], color='b', linestyle='-.', linewidth=2,
             marker='o', markersize=4, markerfacecolor='w', markeredgecolor='b',
             label='arms last')
@@ -90,15 +90,25 @@ def plot(theta1_last, theta2_last, theta1_new, theta2_new):
     ax.set_ylabel('y')
     ax.legend()
     ax.grid(True, alpha=0.3)
-    
-    plt.show()  
-    
+
+    plt.show()
+
+#-----------------------------------
+
+
+#业务逻辑：根据目标坐标执行一次运动
+def execute_motion(x, y):
+    global theta1_past, theta2_past
+    theta1_cur, theta2_cur = backward_kinematics(x, y)
+    theta1_cur = correct_degree(theta1_cur, theta1_past)
+    theta2_cur = correct_degree(theta2_cur, theta2_past)
+    plot(theta1_past, theta2_past, theta1_cur, theta2_cur)
+    theta1_past, theta2_past = theta1_cur, theta2_cur
 #-----------------------------------
 
 
 #主程序
 def main():
-    global theta1_past, theta2_past
     while True:
         inp = input('x y (q for quit): ').strip()
         if inp.lower() == 'q':
@@ -107,16 +117,11 @@ def main():
         if len(parts) != 2:
             print("expect 2 input here")
             continue
-        else:
-            if x ** 2 + y ** 2 > (l1 + l2)**2 or x ** 2 + y ** 2 < (l1 - l2)**2:
-                print("inaccessble")
-                continue
         x, y = map(float, parts)
-        theta1_cur , theta2_cur = backward_kinematics(x,y)
-        theta1_cur = correct_degree(theta1_cur, theta1_past)
-        theta2_cur = correct_degree(theta2_cur, theta2_past)
-        plot(theta1_past, theta2_past, theta1_cur, theta2_cur)
-        theta1_past, theta2_past = theta1_cur, theta2_cur
+        if x ** 2 + y ** 2 > (l1 + l2)**2 or x ** 2 + y ** 2 < (l1 - l2)**2:
+            print("inaccessble")
+            continue
+        execute_motion(x, y)
 #-----------------------------------
 
 if __name__ == '__main__':
