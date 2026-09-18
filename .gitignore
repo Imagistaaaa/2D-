@@ -1,0 +1,30 @@
+# ---- AI 助手 / 编辑器本地配置 ----
+.claude/
+# 万一未来把整个目录都加进来，settings.local.json 里可能有本地路径信息
+.claude/settings.local.json
+
+# ---- Python ----
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+build/
+dist/
+*.egg-info/
+.venv/
+venv/
+env/
+
+# ---- Jupyter ----
+.ipynb_checkpoints/
+
+# ---- IDE ----
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# ---- 系统 ----
+.DS_Store
+Thumbs.db
+desktop.ini
